@@ -4,11 +4,11 @@ A simple Java program to create and handle Events
 
 ## License
 
-This project is licensed under the [AGPL-3.0 license](https://github.com/wouterkistemaker/Cappuccino/blob/master/LICENSE)
+This project is licensed under the [AGPL-3.0 license](https://github.com/wouterkistemaker/EventManager/blob/master/LICENSE)
 
 ## Contributing
 
-Contributions are always welcome. Documentation on how to contribute to this project can be found [here](https://github.com/wouterkistemaker/Cappuccino/blob/master/CONTRIBUTING.md)
+Contributions are always welcome. Documentation on how to contribute to this project can be found [here](https://github.com/wouterkistemaker/EventManager/blob/master/CONTRIBUTING.md)
 
 ## Project Board
 
