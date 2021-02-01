@@ -21,7 +21,7 @@ import java.util.Queue;
 */
 
 /**
- * Class representing the main functional unit of this
+ * Represents the main functional unit of this
  * library. It allows the user to call {@link Event Events}, and
  * add {@link EventListener EventListeners} that will respond
  * accordingly to the called {@link Event Events}.

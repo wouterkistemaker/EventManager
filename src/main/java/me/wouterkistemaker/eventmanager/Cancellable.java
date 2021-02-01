@@ -15,9 +15,9 @@ package me.wouterkistemaker.eventmanager;
 */
 
 /**
- * Interface that is used to indicate whether an Event
- * has the option to be cancelled. Cancelled events may result
- * in a different processing by {@link EventListener EventListeners}
+ * Represents an {@link Event} that has the option to be cancelled.
+ * Cancelled {@link Event Events} may result in a different processing
+ * by {@link EventListener EventListeners}
  */
 public interface Cancellable {
 
