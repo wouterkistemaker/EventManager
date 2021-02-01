@@ -10,10 +10,6 @@ This project is licensed under the [AGPL-3.0 license](https://github.com/wouterk
 
 Contributions are always welcome. Documentation on how to contribute to this project can be found [here](https://github.com/wouterkistemaker/EventManager/blob/master/CONTRIBUTING.md)
 
-## Project Board
-
-All issues, active progress and things to be done can all be found on the [project board]().
-
 ## Documentation
 
 The documentation can be found [here]() but isn't complete yet. I will try to finish this as soon as possible.
