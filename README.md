@@ -12,7 +12,7 @@ Contributions are always welcome. Documentation on how to contribute to this pro
 
 ## Documentation
 
-The documentation can be found [here]() but isn't complete yet. I will try to finish this as soon as possible.
+The documentation can be found [here](https://wouterkistemaker.github.io/EventManager/me/wouterkistemaker/eventmanager/package-summary.html) but isn't complete yet. I will try to finish this as soon as possible.
 
 ## Example
 
