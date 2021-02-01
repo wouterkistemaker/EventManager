@@ -4,19 +4,19 @@ A simple Java program to create and handle Events
 
 ## License
 
-This project is licensed under the [AGPL-3.0 license](https://github.com/wouterkistemaker/Cappuccino/blob/master/LICENSE)
+This project is licensed under the [AGPL-3.0 license](https://github.com/wouterkistemaker/EventManager/blob/master/LICENSE)
 
 ## Contributing
 
-Contributions are always welcome. Documentation on how to contribute to this project can be found [here](https://github.com/wouterkistemaker/Cappuccino/blob/master/CONTRIBUTING.md)
-
-## Project Board
-
-All issues, active progress and things to be done can all be found on the [project board]().
+Contributions are always welcome. Documentation on how to contribute to this project can be found [here](https://github.com/wouterkistemaker/EventManager/blob/master/CONTRIBUTING.md)
 
 ## Documentation
 
 The documentation can be found [here]() but isn't complete yet. I will try to finish this as soon as possible.
+
+## Example
+
+An example of how this repository can be used, can be found [here](https://github.com/wouterkistemaker/EventManager/blob/master/examples/EventTest.java)
 
 ## Disclaimer
 
