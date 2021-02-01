@@ -3,10 +3,30 @@ package me.wouterkistemaker.eventmanager;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public final class EventLoop implements Runnable {
+/*
+  Copyright (C) 2020-2021, Wouter Kistemaker.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
-    private EventManager eventManager;
-    private Queue<Event> eventQueue;
+/**
+ * Package-private class that contains the {@link Queue<Event>} of {@link Event Events}
+ * that are being called through/by this {@link EventManager}. The main
+ * purpose of this class, is to make sure that {@link Event Events} are processed
+ * in the right order, especially when there is delay caused by any reason
+ */
+final class EventLoop implements Runnable {
+
+    private final EventManager eventManager;
+    private final Queue<Event> eventQueue;
 
     /**
      * Default constructor to construct the {@link EventLoop}.
@@ -27,7 +47,7 @@ public final class EventLoop implements Runnable {
      * the tasks of each {@link Event} in the {@link Queue}
      */
     @Override
-    public void run() {
+    public final void run() {
         try {
             for (; ; ) {
                 do {
@@ -42,11 +62,19 @@ public final class EventLoop implements Runnable {
         }
     }
 
-    public Queue<Event> getEventQueue() {
+    /**
+     * @return {@link Queue<Event>} containing all not yet processed {@link Event Events}
+     */
+    protected final Queue<Event> getEventQueue() {
         return eventQueue;
     }
 
-    public <T extends Event> void queue(T event) {
+    /**
+     * Adds a new {@link Event} to the {@link Queue<Event>}
+     * @param event {@link Event} to add to the {@link Queue<Event>}
+     * @param <T> any subclass of {@link Event}
+     */
+    protected final <T extends Event> void queue(T event) {
         eventQueue.add(event);
     }
 }
