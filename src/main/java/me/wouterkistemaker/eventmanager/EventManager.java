@@ -47,7 +47,7 @@ public final class EventManager {
      * After initializing the {@link Thread} it calls the 'start()'
      * of the thread which will start the {@link Runnable} to run.
      */
-    public final void start() {
+    public void start() {
         this.eventLoopThread = new Thread(this.eventLoop);
         this.eventLoopThread.start();
     }
@@ -61,10 +61,11 @@ public final class EventManager {
      * method that simply closes the {@link Thread} and resets the
      * value that is used in this {@link Class}
      */
-    public final void stop() {
+    public void stop() {
         if (!eventLoop.getEventQueue().isEmpty()){
             return;
         }
+        
         forceStop();
     }
 
@@ -75,7 +76,7 @@ public final class EventManager {
      * After interrupting, it resets the value of the {@link Thread} that
      * is being used in  this {@link Class}
      */
-    public final void forceStop() {
+    public void forceStop() {
         this.eventLoopThread.interrupt();
         this.eventLoopThread = null;
     }
@@ -87,7 +88,7 @@ public final class EventManager {
      * @param eventListener The {@link EventListener} that is being registered
      *                      to the {@link List} in this class.
      */
-    public final void register(EventListener eventListener) {
+    public void register(EventListener eventListener) {
         this.listeners.add(eventListener);
     }
 
@@ -103,7 +104,7 @@ public final class EventManager {
      * @param event An instance of an {@link Class} that is a superclass
      *              from {@link Event}
      */
-    protected final <T extends Event> void executeEvent(T event) {
+    protected <T extends Event> void executeEvent(T event) {
         Class<? extends Event> eventClass = event.getClass();
 
         for (EventListener listener : this.listeners) {
@@ -129,7 +130,7 @@ public final class EventManager {
      * @param event Instance of the event to be added to the {@link Queue}
      *              in the {@link EventLoop}
      */
-    public final <T extends Event> void callEvent(T event) {
+    public <T extends Event> void callEvent(T event) {
         eventLoop.queue(event);
     }
 
@@ -142,8 +143,7 @@ public final class EventManager {
      * @return <code>true</code> the method can be invoked on a called {@link Event}
      * <code>false</code> otherwise
      */
-    private boolean isGoodMethod(final Method m) {
-        boolean b = m.getParameters().length == 1 && m.isAnnotationPresent(EventTag.class);
+    private boolean isGoodMethod(Method m) {
         return m.getParameters().length == 1 && m.isAnnotationPresent(EventTag.class);
     }
 }
