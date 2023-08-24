@@ -104,7 +104,7 @@ public final class EventManager extends Thread {
 
     /**
      * Calls an event to this event manager, adding it to the event queue.
-     * The event will be processed on a FILO (first-in-last-out) basis.
+     * The event will be processed on a FIFO (first-in-first-out) basis.
      *
      * @param event The event to call to this manager
      * @param <T>   The type of event to call to this manager
@@ -115,7 +115,7 @@ public final class EventManager extends Thread {
 
     /**
      * Priority calls an event to this event manager, adding it to the head of the event queue.
-     * The event will be processed on a FIFO (first-in-first-out) basis.
+     * The event will be processed on a LIFO (last-in-first-out) basis.
      *
      * @param event The event to call to this manager
      * @param <T>   The type of event to call to this manager
