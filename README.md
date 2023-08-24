@@ -6,6 +6,8 @@ This is a forked version of [Wouter Kistermaker's work](https://github.com/woute
 The internal handling of events were improved, and [execution priorities](src%2Fmain%2Fjava%2Fme%2Fwouterkistemaker%2Feventmanager%2FHandlerPriority.java)
 have been added.
 
+#### [DOCUMENTATION](https://themrsung.github.io/EventManagerX/me/wouterkistemaker/eventmanager/package-summary.html)
+
 ---
 
 **This section is a direct copy from the original README.**
