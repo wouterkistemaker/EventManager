@@ -2,10 +2,7 @@ package me.wouterkistemaker.eventmanager;
 
 import jakarta.annotation.Nonnull;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 /*
   Copyright (C) 2020-2021, Wouter Kistemaker.
@@ -90,6 +87,9 @@ public final class EventManager extends Thread {
      */
     public void register(@Nonnull EventListener eventListener) {
         handlers.addAll(eventListener.getHandlerReferences());
+
+        // Preemptively sort by priority
+        handlers.sort(Comparator.comparing(HandlerReference::priority));
     }
 
     /**

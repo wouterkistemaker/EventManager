@@ -19,7 +19,7 @@ package me.wouterkistemaker.eventmanager;
  * Cancelled {@link Event Events} may result in a different processing
  * by {@link EventListener EventListeners}
  */
-public interface Cancellable {
+public interface Cancellable extends Handleable {
 
 
     /**
