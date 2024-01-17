@@ -1,9 +1,8 @@
 package me.wouterkistemaker.eventmanager;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import jakarta.annotation.Nonnull;
+
+import java.lang.annotation.*;
 
 /*
   Copyright (C) 2020-2021, Wouter Kistemaker.
@@ -26,8 +25,17 @@ import java.lang.annotation.Target;
  * <p>
  * This annotation has no other use
  */
-
+@Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventTag {
+    /**
+     * Returns the execution priority of this event handler.
+     *
+     * @return The execution priority of this event handler
+     * @see HandlerPriority
+     * @since 1.1
+     */
+    @Nonnull
+    HandlerPriority priority() default HandlerPriority.MEDIUM;
 }

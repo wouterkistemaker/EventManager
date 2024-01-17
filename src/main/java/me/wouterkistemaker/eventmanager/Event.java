@@ -14,16 +14,59 @@ package me.wouterkistemaker.eventmanager;
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/**
- * Represents an Event, each Event requires a getDescription() function
- */
-public abstract class Event {
+import jakarta.annotation.Nullable;
 
+/**
+ * The default implementation of {@link Handleable}. Events can be called to an event manager
+ * in order to be processed by listeners.
+ *
+ * @see Handleable
+ * @see EventListener
+ */
+public abstract class Event implements Handleable {
     /**
-     * Default constructor to construct
-     * the {@link Object} of an {@link Event}
+     * Creates a new event with no specified cause.
      */
     protected Event() {
+        this(null);
+    }
+
+    /**
+     * Creates a new event.
+     *
+     * @param cause The cause of this event
+     * @since 1.1
+     */
+    protected Event(@Nullable Handleable cause) {
+        this.cause = cause;
+    }
+
+    //
+    // Variables
+    //
+
+    /**
+     * The cause of this event.
+     *
+     * @since 1.1
+     */
+    @Nullable
+    protected final Handleable cause;
+
+    //
+    // Methods
+    //
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     * @since 1.1
+     */
+    @Override
+    @Nullable
+    public Handleable getCause() {
+        return cause;
     }
 
     /**

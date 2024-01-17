@@ -1,10 +1,8 @@
 package me.wouterkistemaker.eventmanager;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import jakarta.annotation.Nonnull;
+
+import java.util.*;
 
 /*
   Copyright (C) 2020-2021, Wouter Kistemaker.
@@ -21,129 +19,108 @@ import java.util.Queue;
 */
 
 /**
- * Represents the main functional unit of this
- * library. It allows the user to call {@link Event Events}, and
- * add {@link EventListener EventListeners} that will respond
- * accordingly to the called {@link Event Events}.
+ * An event manager. Event managers handle the lifecycle of events and listeners.
+ * This implementation is completely synchronous, meaning it has only one thread.
+ * (the instance itself is a thread) Thus, concurrency issues are not a concern.
  *
- * After initialization, one will have to manually
- * start the EventManager by calling the {@link #start()}-function.
+ * @see Event
+ * @see EventListener
  */
-public final class EventManager {
-
-    private final List<EventListener> listeners;
-    private final EventLoop eventLoop;
-    private Thread eventLoopThread; // cannot be final, due to the forceStop() method
-
-    public EventManager() {
-        this.listeners = new ArrayList<>();
-        this.eventLoop = new EventLoop(this);
-    }
+public final class EventManager extends Thread {
+    //
+    // Variables
+    //
 
     /**
-     * This method initializes the {@link Thread} that is used
-     * with {@link Runnable} = {@link EventLoop}
-     * <p>
-     * After initializing the {@link Thread} it calls the 'start()'
-     * of the thread which will start the {@link Runnable} to run.
-     */
-    public void start() {
-        this.eventLoopThread = new Thread(this.eventLoop);
-        this.eventLoopThread.start();
-    }
-
-    /**
-     * This method checks whether the {@link Thread} of the {@link EventLoop}
-     * is still running or not. If the {@link Thread} is still running,
-     * the method accepts this, and doesn't do anything.
-     * <p>
-     * If the {@link Thread} is not running, it calls the forceStop()
-     * method that simply closes the {@link Thread} and resets the
-     * value that is used in this {@link Class}
-     */
-    public void stop() {
-        if (!eventLoop.getEventQueue().isEmpty()){
-            return;
-        }
-        
-        forceStop();
-    }
-
-    /**
-     * This method instantly shuts down the {@link Thread} of the {@link EventLoop}
-     * without checking of it is still running or not.
-     * <p>
-     * After interrupting, it resets the value of the {@link Thread} that
-     * is being used in  this {@link Class}
-     */
-    public void forceStop() {
-        this.eventLoopThread.interrupt();
-        this.eventLoopThread = null;
-    }
-
-    /**
-     * This method registers a new {@link EventListener} to the {@link List}
-     * of {@link EventListener}
+     * The list of handler references.
      *
-     * @param eventListener The {@link EventListener} that is being registered
-     *                      to the {@link List} in this class.
+     * @since 1.1
      */
-    public void register(EventListener eventListener) {
-        this.listeners.add(eventListener);
-    }
-
+    @Nonnull
+    private final List<HandlerReference> handlers = new ArrayList<>();
 
     /**
-     * This method executes an {@link Event}. By doing so, the method
-     * iterates over all registered {@link EventListener} and
-     * checks whether these {@link EventListener} contains a method
-     * that can be used to invoke on the called {@link Event}
-     * <p>
-     * If there is no method that can be invoked on the called {@link Event}
+     * The queue of unprocessed events.
      *
-     * @param event An instance of an {@link Class} that is a superclass
-     *              from {@link Event}
+     * @since 1.1
      */
-    protected <T extends Event> void executeEvent(T event) {
-        Class<? extends Event> eventClass = event.getClass();
+    @Nonnull
+    private final Deque<Handleable> eventQueue = new ArrayDeque<>();
 
-        for (EventListener listener : this.listeners) {
-            for (Method m : listener.getClass().getDeclaredMethods()) {
-                if (isGoodMethod(m)) { // So we are sure it is a Listener Method
-                    if (m.getParameters()[0].getType().isAssignableFrom(eventClass)) { // We are sure the parameter is for this specific event
-                        try {
-                            m.invoke(listener, event);
-                        } catch (IllegalAccessException | InvocationTargetException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
+    //
+    // Methods
+    //
+
+    /**
+     * Starts this event manager, entering an infinite loop processing events until interrupted.
+     */
+    @Override
+    public void run() {
+        while (!Thread.interrupted()) {
+            // Poll next event and check for null
+            final Handleable event = eventQueue.pollFirst();
+            if (event == null) continue;
+
+            // Iterate through copied list of handlers to prevent concurrency issues
+            for (final HandlerReference handler : List.copyOf(handlers)) {
+                // Continue if the handler rejects the event
+                if (!handler.accepts(event)) continue;
+
+                // Handles the event
+                handler.handle(event);
             }
         }
     }
 
     /**
-     * This method is used to call an {@link Event}, which means that
-     * the {@link Event} is added to the {@link Queue} so that, in case of overloads
-     * the {@link Event}s will be executed in the right order
-     *
-     * @param event Instance of the event to be added to the {@link Queue}
-     *              in the {@link EventLoop}
+     * Deprecated method. This delegates to {@link #interrupt()}.
      */
-    public <T extends Event> void callEvent(T event) {
-        eventLoop.queue(event);
+    @Deprecated(since = "1.1", forRemoval = true)
+    public void forceStop() {
+        interrupt();
     }
 
     /**
-     * Simple method to check whether the given {@link Method}
-     * is a method that can be invoked on a called {@link Event}
+     * Registers an event listener to this event manager.
      *
-     * @param m The method to check whether it can be
-     *          invoked on a called {@link Event}
-     * @return <code>true</code> the method can be invoked on a called {@link Event}
-     * <code>false</code> otherwise
+     * @param eventListener The listener to register to this event manager
      */
-    private boolean isGoodMethod(Method m) {
-        return m.getParameters().length == 1 && m.isAnnotationPresent(EventTag.class);
+    public void register(@Nonnull EventListener eventListener) {
+        handlers.addAll(eventListener.getHandlerReferences());
+
+        // Preemptively sort by priority
+        handlers.sort(Comparator.comparing(HandlerReference::priority));
+    }
+
+    /**
+     * Unregisters an event listener from this event manager.
+     *
+     * @param eventListener The listener to unregister from this event manager
+     * @since 1.1
+     */
+    public void unregister(@Nonnull EventListener eventListener) {
+        handlers.removeAll(eventListener.getHandlerReferences());
+    }
+
+    /**
+     * Calls an event to this event manager, adding it to the event queue.
+     * The event will be processed on a FIFO (first-in-first-out) basis.
+     *
+     * @param event The event to call to this manager
+     * @param <T>   The type of event to call to this manager
+     */
+    public <T extends Handleable> void callEvent(@Nonnull T event) {
+        eventQueue.offerLast(event);
+    }
+
+    /**
+     * Priority calls an event to this event manager, adding it to the head of the event queue.
+     * The event will be processed on a LIFO (last-in-first-out) basis.
+     *
+     * @param event The event to call to this manager
+     * @param <T>   The type of event to call to this manager
+     */
+    public <T extends Handleable> void priorityCallEvent(@Nonnull T event) {
+        eventQueue.addFirst(event);
     }
 }

@@ -13,28 +13,28 @@ package me.wouterkistemaker.eventmanager;
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-public class EventTest {
 
+/**
+ * A demo program to facilitate the onboarding of this library.
+ */
+public class EventTest {
+    /**
+     * The event manager instance of this program.
+     */
+    private static final EventManager manager = new EventManager();
+
+    /**
+     * The entry point of this program.
+     * @param args Ignored
+     */
     public static void main(String[] args) {
-        final EventManager manager = new EventManager();
+        // Register listener
+        manager.register(new ExampleListener());
+
+        // Start event manager
         manager.start();
 
-        manager.register(new MyEventListener());
-        manager.callEvent(new MyEvent()); // Console successfully prints 'My event was called!'
-    }
-
-    private static final class MyEventListener implements EventListener {
-
-        @EventTag
-        public void onEventCall(MyEvent event) {
-            System.out.println("My event was called!");
-        }
-    }
-
-    private static final class MyEvent extends Event {
-        @Override
-        public String getDescription() {
-            return "My very own event";
-        }
+        // Call event
+        manager.callEvent(new ExampleEvent());
     }
 }
